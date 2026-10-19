@@ -1,0 +1,36 @@
+name: Phase 2.5 validation
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate Supabase locally
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Supabase CLI
+        uses: supabase/setup-cli@v3
+        with:
+          version: latest
+
+      - name: Start local Supabase with migrations and seed
+        run: supabase start
+
+      - name: Run database tests
+        run: supabase test db
+
+      - name: Lint local database
+        run: supabase db lint --local --fail-on error

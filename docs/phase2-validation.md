@@ -147,8 +147,30 @@ Não executar `supabase db push`, `supabase link`, `supabase db reset --linked` 
 - RLS não deve ser tratado como controle contra `service_role`, proprietário do banco ou administrador; revisão operacional de grants e acesso ao projeto Supabase continua necessária.
 - O projeto ainda não declara conformidade legal, nem implementa REP-P completo, AFD, AEJ ou assinaturas.
 
-## 8. Status
+## 8. CI e publicacao no GitHub
+
+O workflow `.github/workflows/phase2-5-validation.yml` executa no runner `ubuntu-latest`, sem credenciais Supabase e sem operacoes remotas. O `supabase start` inicia o ambiente local e aplica as migrations e o `supabase/seed.sql` ficticio; em seguida, o job executa os 30 asserts pgTAP e o `db lint`.
+
+Para publicar este repositorio como privado no GitHub:
+
+1. Crie um repositorio vazio e privado no GitHub, sem README, `.gitignore` ou license adicionais.
+2. Configure o remoto HTTPS ou SSH e confirme que a conta tem permissao de escrita.
+3. Revise os arquivos ignorados e o staging antes do commit.
+4. Crie o commit e envie manualmente a branch `main`.
+
+Comandos para este worktree, que usa o diretorio Git auxiliar `.git-push`:
+
+```powershell
+git --git-dir=.git-push --work-tree=. add .github/workflows/phase2-5-validation.yml .gitignore docs/phase2-validation.md
+git --git-dir=.git-push --work-tree=. status
+git --git-dir=.git-push --work-tree=. commit -m "ci: validate phase 2.5 in GitHub Actions"
+git --git-dir=.git-push --work-tree=. push -u origin main
+```
+
+O ultimo comando e deliberadamente manual e nao foi executado por esta tarefa. Nao inclua tokens, chaves ou arquivos `.env` no commit.
+
+## 9. Status
 
 # BLOQUEADO
 
-O código da aplicação e o audit de produção estão aprovados nesta máquina, mas a Fase 2.5 não pode ser aprovada integralmente porque o banco local não foi iniciado e nenhum teste pgTAP foi executado. A Fase 3 não deve ser iniciada até a execução local das migrations, dos 30 asserts, do `db lint` e da revisão das vulnerabilidades de desenvolvimento.
+O codigo da aplicacao e o audit de producao continuam sem aprovacao integral da Fase 2.5: nenhum teste pgTAP foi executado neste ambiente e ainda nao existe resultado do GitHub Actions. A Fase 3 nao deve ser iniciada ate haver evidencia real de migrations, seed, 30 asserts, `db lint` e revisao das vulnerabilidades de desenvolvimento no workflow.

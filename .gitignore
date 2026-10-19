@@ -3,6 +3,27 @@ node_modules
 out
 .env*
 !.env.example
+# Certificates, private keys, and database credentials
+*.pem
+*.key
+*.crt
+*.cer
+*.p12
+*.pfx
+.pgpass
+*.pgpass
+*.dump
+*.sql.gz
+credentials*.json
+*-credentials.json
+# Real employee exports and local data files
+data/
+exports/
+backups/
+*.csv
+*.tsv
+*.xls
+*.xlsx
 coverage
 *.tsbuildinfo
 supabase/.temp
