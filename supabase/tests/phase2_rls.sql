@@ -26,16 +26,16 @@ select throws_ok(
     values (auth.uid(), '10000000-0000-0000-0000-000000000001', '20000000-0000-0000-0000-000000000001', 'admin')$$,
   '42501', null, 'funcionária não consegue promover o próprio papel'
 );
+with attempted as (
+  update public.user_roles
+     set role = 'admin'
+   where user_id = auth.uid()
+   returning user_id
+)
+select set_config('phase2.role_updated_rows', count(*)::text, true)
+from attempted;
 select ok(
-  (
-    with attempted as (
-      update public.user_roles
-         set role = 'admin'
-       where user_id = auth.uid()
-       returning user_id
-    )
-    select count(*) = 0 from attempted
-  )
+  current_setting('phase2.role_updated_rows') = '0'
   and coalesce(
     (select role::text = 'employee' from public.user_roles where user_id = auth.uid()),
     false
@@ -49,19 +49,14 @@ select throws_ok(
     'A-9999', 'Tentativa não autorizada', null, 'Cargo')$$,
   '42501', null, 'cadastro de funcionário exige autorização administrativa'
 );
-select set_config(
-  'phase2.transfer_updated_rows',
-  (
-    with attempted as (
-      update public.employees
-         set establishment_id = '20000000-0000-0000-0000-000000000002'
-       where id = '50000000-0000-0000-0000-000000000002'
-       returning id
-    )
-    select count(*)::text from attempted
-  ),
-  true
-);
+with attempted as (
+  update public.employees
+     set establishment_id = '20000000-0000-0000-0000-000000000002'
+   where id = '50000000-0000-0000-0000-000000000002'
+   returning id
+)
+select set_config('phase2.transfer_updated_rows', count(*)::text, true)
+from attempted;
 set local role service_role;
 select ok(
   current_setting('phase2.transfer_updated_rows') = '0'

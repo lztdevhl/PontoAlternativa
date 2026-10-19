@@ -195,3 +195,9 @@ Validacao nesta maquina apos as correcoes:
 | `supabase test db` | NAO EXECUTADO: Docker/Postgres local indisponivel |
 
 Status: **BLOQUEADO ate nova execucao real do GitHub Actions**. A aprovacao exige 30/30 asserts e `db lint` aprovado; nenhum resultado local acima deve ser tratado como aprovacao da Fase 2.5.
+
+## 11. Correcao do erro SQL no Actions
+
+O Actions interrompeu a primeira execucao na linha 44 com `WITH clause containing a data-modifying statement must be at the top level`. Os dois testes de `UPDATE` agora usam um `WITH attempted AS (UPDATE ... RETURNING ...)` como comando de nivel superior, agregam a quantidade de linhas afetadas em uma variavel de sessao e deixam o `select ok` separado para verificar o valor persistido.
+
+Os 30 asserts foram preservados. A execucao do pgTAP no Actions ainda e necessaria para confirmar que os 30 testes avancam ate o fim.
