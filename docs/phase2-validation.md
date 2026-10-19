@@ -174,3 +174,24 @@ O ultimo comando e deliberadamente manual e nao foi executado por esta tarefa. N
 # BLOQUEADO
 
 O codigo da aplicacao e o audit de producao continuam sem aprovacao integral da Fase 2.5: nenhum teste pgTAP foi executado neste ambiente e ainda nao existe resultado do GitHub Actions. A Fase 3 nao deve ser iniciada ate haver evidencia real de migrations, seed, 30 asserts, `db lint` e revisao das vulnerabilidades de desenvolvimento no workflow.
+
+## 10. Correcoes apos a primeira execucao do GitHub Actions
+
+Resultado informado da primeira execucao: 27 testes passaram e 3 falharam.
+
+- Os testes 9 e 11 esperavam SQLSTATE `42501`, mas RLS pode rejeitar um `UPDATE` sem excecao quando a linha nao passa pela politica `USING`. Os testes foram ajustados para confirmar zero linhas afetadas e verificar que o papel e o estabelecimento original permanecem persistidos.
+- O teste 24 esperava 19 funcoes `SECURITY DEFINER`, mas as migrations publicadas definem 18. A contagem foi corrigida e a verificacao agora exige `search_path=""`.
+- Foi criada a migration incremental `20261019000100_phase2_security_definer_search_path.sql`. Ela nao altera migrations publicadas e fixa `search_path = ''` nas 18 funcoes customizadas, mantendo referencias de schema explicitas.
+- A revisao confirmou que `create_employee_with_assignment` continua sem `EXECUTE` para `public`, `anon` e `service_role`, com concessao somente para `authenticated`.
+
+Validacao nesta maquina apos as correcoes:
+
+| Comando | Resultado |
+|---|---|
+| `npm run typecheck` | PASSOU |
+| `npm run lint` | PASSOU |
+| `npm test` | BLOQUEADO no startup por `spawn EPERM` ao iniciar o esbuild |
+| `npm run build` | BLOQUEADO no typecheck do Next por `spawn EPERM` |
+| `supabase test db` | NAO EXECUTADO: Docker/Postgres local indisponivel |
+
+Status: **BLOQUEADO ate nova execucao real do GitHub Actions**. A aprovacao exige 30/30 asserts e `db lint` aprovado; nenhum resultado local acima deve ser tratado como aprovacao da Fase 2.5.

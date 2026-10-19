@@ -26,9 +26,21 @@ select throws_ok(
     values (auth.uid(), '10000000-0000-0000-0000-000000000001', '20000000-0000-0000-0000-000000000001', 'admin')$$,
   '42501', null, 'funcionária não consegue promover o próprio papel'
 );
-select throws_ok(
-  $$update public.user_roles set role = 'admin' where user_id = auth.uid()$$,
-  '42501', null, 'funcionária não consegue alterar o próprio papel'
+select ok(
+  (
+    with attempted as (
+      update public.user_roles
+         set role = 'admin'
+       where user_id = auth.uid()
+       returning user_id
+    )
+    select count(*) = 0 from attempted
+  )
+  and coalesce(
+    (select role::text = 'employee' from public.user_roles where user_id = auth.uid()),
+    false
+  ),
+  'funcionária não consegue alterar o próprio papel e o valor permanece employee'
 );
 select throws_ok(
   $$select public.create_employee_with_assignment(
@@ -37,12 +49,28 @@ select throws_ok(
     'A-9999', 'Tentativa não autorizada', null, 'Cargo')$$,
   '42501', null, 'cadastro de funcionário exige autorização administrativa'
 );
-select throws_ok(
-  $$update public.employees
-       set establishment_id = '20000000-0000-0000-0000-000000000002'
-     where id = '50000000-0000-0000-0000-000000000002'$$,
-  '42501', null, 'funcionário comum não transfere estabelecimento'
+select set_config(
+  'phase2.transfer_updated_rows',
+  (
+    with attempted as (
+      update public.employees
+         set establishment_id = '20000000-0000-0000-0000-000000000002'
+       where id = '50000000-0000-0000-0000-000000000002'
+       returning id
+    )
+    select count(*)::text from attempted
+  ),
+  true
 );
+set local role service_role;
+select ok(
+  current_setting('phase2.transfer_updated_rows') = '0'
+  and (select establishment_id = '20000000-0000-0000-0000-000000000001'::uuid
+       from public.employees
+       where id = '50000000-0000-0000-0000-000000000002'),
+  'funcionário comum não transfere estabelecimento e o vínculo permanece na origem'
+);
+set local role authenticated;
 
 -- Administrador da empresa A não atravessa o limite da empresa B.
 select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-000000000101', true);
@@ -132,7 +160,7 @@ select ok(
      join pg_namespace n on n.oid = p.pronamespace
     where n.nspname = 'public'
       and p.prosecdef
-      and p.proconfig @> array['search_path=public']::text[]
+      and p.proconfig @> array['search_path=""']::text[]
       and p.proname in (
         'user_has_company_access', 'user_has_establishment_access', 'user_has_role',
         'validate_user_role_scope', 'validate_employee_scope',
@@ -144,8 +172,8 @@ select ok(
         'audit_employee_change', 'create_employee_with_assignment',
         'validate_employee_assignment_employee_company'
       )
-  ) = 19,
-  'funções SECURITY DEFINER usam search_path fixo em public'
+  ) = 18,
+  'funções SECURITY DEFINER usam search_path vazio e referências qualificadas'
 );
 
 -- Eventos e marcações originais são imutáveis mesmo para o papel de serviço.
