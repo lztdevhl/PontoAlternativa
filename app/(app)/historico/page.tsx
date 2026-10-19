@@ -1,0 +1,5 @@
+import { Card, StatusPill } from "@/components/ui";
+
+export default function HistoricoPage() {
+  return <div className="mx-auto max-w-[1100px] px-5 py-6 sm:px-8 lg:px-10 lg:py-10"><header className="mb-8"><p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-brand-700">Transparência</p><h1 className="text-3xl font-semibold tracking-[-0.04em] text-ink">Histórico de marcações</h1><p className="mt-2 text-sm text-muted">Registros originais e tratamentos são exibidos separadamente.</p></header><Card><div className="flex flex-col items-start justify-between gap-4 border-b border-line pb-5 sm:flex-row sm:items-center"><div><h2 className="font-semibold text-ink">Outubro de 2026</h2><p className="mt-1 text-xs text-muted">Nenhuma marcação neste período.</p></div><StatusPill tone="gray">Sem dados</StatusPill></div><div className="flex min-h-40 items-center justify-center text-center text-sm text-muted">Suas marcações aparecerão aqui depois do primeiro registro.</div></Card></div>;
+}

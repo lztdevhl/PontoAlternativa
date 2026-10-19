@@ -1,0 +1,5 @@
+import { Card, StatusPill } from "@/components/ui";
+
+export default function SolicitacoesPage() {
+  return <div className="mx-auto max-w-[1100px] px-5 py-6 sm:px-8 lg:px-10 lg:py-10"><header className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-brand-700">Tratamento</p><h1 className="text-3xl font-semibold tracking-[-0.04em] text-ink">Solicitações</h1><p className="mt-2 text-sm text-muted">Peça ajustes sem alterar o registro original.</p></div><button disabled className="cursor-not-allowed rounded-xl bg-slate-200 px-4 py-3 text-sm font-semibold text-slate-500">Nova solicitação em breve</button></header><Card><div className="flex items-center justify-between border-b border-line pb-5"><h2 className="font-semibold text-ink">Minhas solicitações</h2><StatusPill tone="gray">0 abertas</StatusPill></div><div className="flex min-h-40 items-center justify-center text-center text-sm text-muted">Você ainda não possui solicitações.</div></Card></div>;
+}

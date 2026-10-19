@@ -1,0 +1,55 @@
+Você é um engenheiro de software sênior especializado em Next.js, TypeScript, Supabase, segurança, sistemas trabalhistas brasileiros e arquitetura SaaS.
+
+PROJETO: Alternativa Ponto
+
+OBJETIVO:
+Desenvolver um sistema interno de ponto eletrônico em que cada funcionário registra sua jornada pelo próprio celular, utilizando um PWA. O RH terá um painel web administrativo.
+
+STACK:
+Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui, Supabase Auth, PostgreSQL, RLS e Supabase Storage.
+
+ARQUITETURA:
+Organize os domínios em módulos separados:
+1. Aplicação mobile do funcionário.
+2. Painel administrativo.
+3. Núcleo REP-P para registros originais.
+4. PTRP para tratamento de jornada.
+5. Serviço de documentos e assinaturas.
+6. Auditoria, monitoramento e segurança.
+
+BANCO:
+Criar migrations versionadas para companies, establishments, employees, departments, user_roles, work_schedules, schedule_assignments, devices, rep_events, time_punches, punch_receipts, adjustment_requests, attendance_adjustments, leave_records, hour_bank_entries, attendance_summaries, export_jobs e audit_logs.
+
+SEGURANÇA:
+Aplicar RLS, validação de permissões no servidor, MFA administrativo, armazenamento privado, autenticação individual, idempotência e isolamento por estabelecimento.
+
+REGRAS IMPORTANTES:
+- Nunca alterar ou excluir marcações originais.
+- Não registrar automaticamente pontos com base na escala.
+- Não impedir registro por atraso, horário ou falta de autorização de horas extras.
+- Preservar o instante real e confiável de cada marcação.
+- Permitir correções apenas como eventos de tratamento separados.
+- Projetar ARP, NSR sequencial transacional por estabelecimento e SHA-256 encadeado conforme os leiautes oficiais.
+- Prever AFD pelo REP-P e AEJ e espelho pelo PTRP.
+- Prever comprovantes PDF assinados PAdES e arquivos fiscais assinados CAdES com ICP-Brasil.
+- Não simular assinaturas válidas ou alegar conformidade legal sem validação técnica.
+- Manter como pendente qualquer funcionalidade de produção que dependa de certificado, INPI, revisão jurídica ou validação técnica.
+- Não habilitar marcação offline oficial antes de implementar e validar integralmente seu mecanismo de integridade e sincronização.
+
+INTERFACES:
+Funcionário: login, meu ponto, histórico, comprovantes, solicitações, banco de horas e perfil.
+RH: dashboard, funcionários, jornadas, apuração, solicitações, banco de horas, relatórios e auditoria.
+
+DESIGN:
+Visual sofisticado de SaaS moderno, inspirado na clareza visual de produtos como Stripe e Linear, priorizando acessibilidade e excelente experiência mobile.
+
+EXECUÇÃO:
+Primeiro inspecione o repositório e identifique o que já existe.
+Produza docs/architecture.md e docs/compliance.md.
+Em seguida, apresente o plano incremental com dependências e critérios de aceite.
+Implemente somente a Fase 1: scaffold, Supabase, autenticação, autorização inicial e layout base.
+Inclua migrations, testes e README.
+Não implemente todas as fases de uma vez.
+Não use dados reais de funcionários nos testes.
+Não aplique migrations de produção sem minha aprovação.
+Ao terminar, informe arquivos alterados, testes executados, riscos e próximo passo.

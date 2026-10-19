@@ -1,0 +1,5 @@
+import { Card } from "@/components/ui";
+
+export default function PerfilPage() {
+  return <div className="mx-auto max-w-[900px] px-5 py-6 sm:px-8 lg:px-10 lg:py-10"><header className="mb-8"><p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-brand-700">Conta individual</p><h1 className="text-3xl font-semibold tracking-[-0.04em] text-ink">Perfil</h1><p className="mt-2 text-sm text-muted">Dados de acesso e preferências da sua conta.</p></header><Card><div className="flex items-center gap-4 border-b border-line pb-6"><div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-ink text-lg font-semibold text-white">?</div><div><h2 className="font-semibold text-ink">Usuário autenticado</h2><p className="mt-1 text-sm text-muted">Os dados do colaborador serão exibidos após a associação do perfil.</p></div></div><p className="pt-6 text-sm leading-6 text-muted">A autenticação já está preparada para Supabase Auth. O cadastro e a associação a empresa/estabelecimento serão realizados no fluxo administrativo.</p></Card></div>;
+}

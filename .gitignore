@@ -1,0 +1,10 @@
+node_modules
+.next
+out
+.env*
+!.env.example
+coverage
+*.tsbuildinfo
+supabase/.temp
+.git-push
+npm-debug.log*
